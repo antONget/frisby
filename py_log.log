@@ -1,0 +1,6 @@
+frisby_bot.py:25 #INFO     [2024-05-07 21:44:49,620] - __main__ - Starting bot
+dispatcher.py:527 #INFO     [2024-05-07 21:44:49,775] - aiogram.dispatcher - Start polling
+dispatcher.py:341 #INFO     [2024-05-07 21:44:49,828] - aiogram.dispatcher - Run polling for bot @inspecttest_bot id=6544889590 - 'BOT_testbot_2'
+dispatcher.py:455 #WARNING  [2024-05-07 21:45:03,409] - aiogram.dispatcher - Received SIGINT signal
+dispatcher.py:359 #INFO     [2024-05-07 21:45:03,410] - aiogram.dispatcher - Polling stopped for bot @inspecttest_bot id=6544889590 - 'BOT_testbot_2'
+dispatcher.py:554 #INFO     [2024-05-07 21:45:03,410] - aiogram.dispatcher - Polling stopped
