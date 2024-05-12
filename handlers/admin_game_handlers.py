@@ -533,8 +533,8 @@ async def process_set_event_goal(callback: CallbackQuery, state: FSMContext) -> 
         goal = user_dict[callback.message.chat.id]['goal']
         await state.update_data(goal=goal + 1)
     else:
-        goal_break = user_dict[callback.message.chat.id]['nogoal']
-        await state.update_data(nogoal=goal_break + 1)
+        goal_break = user_dict[callback.message.chat.id]['goal_break']
+        await state.update_data(goal_break=goal_break + 1)
     await callback.answer(text='Команда забила ГОЛ!!! Переход в защиту')
     await state.update_data(position='protection')
     await process_get_position_game_continue(callback=callback, state=state)

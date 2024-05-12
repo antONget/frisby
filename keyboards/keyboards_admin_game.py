@@ -160,7 +160,7 @@ def keyboard_event_game() -> None:
                                     callback_data='goal')
     button_6 = InlineKeyboardButton(text='ПРОПУСК',
                                     callback_data='nogoal')
-    button_2 = InlineKeyboardButton(text='turnover',
+    button_2 = InlineKeyboardButton(text='Turnover',
                                     callback_data='turnover')
     button_3 = InlineKeyboardButton(text='BREAK',
                                     callback_data='break')
