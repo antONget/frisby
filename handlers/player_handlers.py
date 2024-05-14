@@ -120,9 +120,9 @@ async def process_select_player_game(callback: CallbackQuery) -> None:
     await callback.message.answer(text=f'<b>Статистика команды:</b>\n'
                                        f'<u>Игра: {select_game[2]} - {select_game[3]}</u>\n'
                                        f'Cчет: <i>{select_game[4] + select_game[5]} - {select_game[6]}</i>\n'
-                                       f'Очки набранные из позиции "атака": {select_game[4]}\n'
-                                       f'Очки набранные из позиции "защита": {select_game[5]}\n'
-                                       f'Количество "turnover": {select_game[7]}\n\n'
+                                       f'Очки занесенные из атаки: {select_game[4]}\n'
+                                       f'Количество "Break": {select_game[5]}\n'
+                                       f'Количество "Turnover": {select_game[7]}\n\n'
                                        f'Статистика игрока: @{name_player}\n'
                                        f'Атака: {stat_player[callback.message.chat.id][0]}\n'
                                        f'Защита: {stat_player[callback.message.chat.id][1]}',

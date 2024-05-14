@@ -36,7 +36,7 @@ async def process_game(message: Message, state: FSMContext) -> None:
     :return:
     """
     logging.info(f'process_game: {message.chat.id}')
-    await message.answer(text="Введите название вашей команды")
+    await message.answer(text="Введите название вашей команды:")
     await state.set_state(Game.name_command_1)
 
 
@@ -50,7 +50,7 @@ async def get_name_command_1(message: Message, state: FSMContext) -> None:
     """
     logging.info(f'get_name_command_1: {message.chat.id}')
     await state.update_data(name_command_1=message.text)
-    await message.answer(text="Введите название команды соперника")
+    await message.answer(text="Введите название команды соперника:")
     await state.set_state(Game.name_command_2)
 
 
