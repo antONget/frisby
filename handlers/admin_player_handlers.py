@@ -42,6 +42,7 @@ async def process_add_user(callback: CallbackQuery) -> None:
 async def process_description(callback: CallbackQuery) -> None:
     logging.info(f'process_description: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    print(list_user)
     keyboard = keyboards_del_users(list_user, 0, 2, 6)
     await callback.message.edit_text(text='Выберите игрока, которого вы хотите удалить',
                                      reply_markup=keyboard)
