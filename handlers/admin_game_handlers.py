@@ -9,7 +9,7 @@ from config_data.config import Config, load_config
 from keyboards.keyboards_admin_game import keyboard_select_place, keyboards_create_command, keyboard_confirm_command, \
     keyboards_select_player, keyboard_confirm_game, keyboard_type_game, keyboard_event_game
 from module.data_base import get_list_users, set_select, get_select, get_list_command, get_game, set_game, set_gameover,\
-    add_game, create_table_games
+    add_game, create_table_games, get_info_coach
 
 import logging
 import json
@@ -43,7 +43,7 @@ async def process_game(message: Message, state: FSMContext) -> None:
 @router.message(F.text, StateFilter(Game.name_command_1))
 async def get_name_command_1(message: Message, state: FSMContext) -> None:
     """
-    Получение назание своей команды
+    Получение название своей команды
     :param message: message.text содержит название команды
     :param state:
     :return:
@@ -57,7 +57,7 @@ async def get_name_command_1(message: Message, state: FSMContext) -> None:
 @router.message(F.text, StateFilter(Game.name_command_2))
 async def get_name_command_2(message: Message, state: FSMContext) -> None:
     """
-    Получение назание своей команды
+    Получение название команды соперника
     :param message: message.text содержит название команды соперника
     :param state:
     :return:
@@ -90,6 +90,8 @@ async def select_player(callback: CallbackQuery, state: FSMContext):
     await state.update_data(count_players=count_players)
     await state.update_data(place_game=callback.data.split('_')[1])
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    list_user.append(info_coach)
     keyboard = keyboards_create_command(list_users=list_user,
                                         back=0,
                                         forward=2,
@@ -114,6 +116,8 @@ async def process_forward(callback: CallbackQuery, state: FSMContext) -> None:
     """
     logging.info(f'process_forward: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    list_user.append(info_coach)
     forward = int(callback.data.split('_')[1]) + 1
     back = forward - 2
     keyboard = keyboards_create_command(list_user, back, forward, 6)
@@ -143,6 +147,8 @@ async def process_back(callback: CallbackQuery, state: FSMContext) -> None:
     """
     logging.info(f'process_back: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    list_user.append(info_coach)
     back = int(callback.data.split('_')[1]) - 1
     forward = back + 2
     keyboard = keyboards_create_command(list_user, back, forward, 6)
@@ -179,6 +185,8 @@ async def process_select_player(callback: CallbackQuery, state: FSMContext) -> N
     else:
         set_select(in_command=1, telegram_id=telegram_id)
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    list_user.append(info_coach)
     user_dict[callback.message.chat.id] = await state.get_data()
     name_command_1 = user_dict[callback.message.chat.id]['name_command_1']
     name_command_2 = user_dict[callback.message.chat.id]['name_command_2']
@@ -201,6 +209,9 @@ async def process_create_command(callback: CallbackQuery, state: FSMContext) -> 
     """
     logging.info(f'process_create_command: {callback.message.chat.id}')
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append(info_coach)
     user_dict[callback.message.chat.id] = await state.get_data()
     name_command_1 = user_dict[callback.message.chat.id]['name_command_1']
     text = f'<b>Состав команды {name_command_1}:</b>\n'
@@ -221,6 +232,8 @@ async def process_change_command(callback: CallbackQuery, state: FSMContext) -> 
     """
     logging.info(f'process_change_command: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    list_user.append(info_coach)
     user_dict[callback.message.chat.id] = await state.get_data()
     name_command_1 = user_dict[callback.message.chat.id]['name_command_1']
     name_command_2 = user_dict[callback.message.chat.id]['name_command_2']
@@ -245,6 +258,9 @@ async def process_create_command(callback: CallbackQuery, state: FSMContext) -> 
     # указываем что это первый розыгрыш
     await state.update_data(firstgame=1)
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
     user_dict[callback.message.chat.id] = await state.get_data()
     name_command_1 = user_dict[callback.message.chat.id]['name_command_1']
     await callback.message.edit_text(text=f'Команда {name_command_1} создана')
@@ -266,6 +282,9 @@ async def process_forward_game(callback: CallbackQuery) -> None:
     """
     logging.info(f'process_forward_game: {callback.message.chat.id}')
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
     forward = int(callback.data.split('_')[1]) + 1
     back = forward - 2
     keyboard = keyboards_select_player(list_command, back, forward, 6)
@@ -287,6 +306,9 @@ async def process_back_game(callback: CallbackQuery) -> None:
     """
     logging.info(f'process_back_game: {callback.message.chat.id}')
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
     back = int(callback.data.split('_')[1]) - 1
     forward = back + 2
     keyboard = keyboards_select_player(list_command, back, forward, 6)
@@ -319,6 +341,9 @@ async def process_select_player_game(callback: CallbackQuery, state: FSMContext)
         set_game(in_game=1,
                  telegram_id=telegram_id)
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
     keyboard = keyboards_select_player(list_users=list_command,
                                        back=0,
                                        forward=2,
@@ -337,25 +362,32 @@ async def process_create_game(callback: CallbackQuery, state: FSMContext) -> Non
     """
     logging.info(f'process_create_game: {callback.message.chat.id}')
     list_command = get_list_command(id_coach=callback.message.chat.id)
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
+    # list_command_ = []
+    list_command_ = [player for player in list_command if player[2]]
     user_dict[callback.message.chat.id] = await state.get_data()
     count_players = user_dict[callback.message.chat.id]['count_players']
-    if len(list_command) < count_players:
-        await callback.answer(text=f'В розыгрыше недостаточно игроков, добавьте еще {count_players - len(list_command)}'
+    print(count_players, len(list_command_))
+    if len(list_command_) < count_players:
+        await callback.answer(text=f'В розыгрыше недостаточно игроков, добавьте еще {count_players - len(list_command_)}'
                                    f' игрока(ов)',
                               show_alert=True)
         # return
-    elif len(list_command) > count_players:
-        await callback.answer(text=f'В розыгрыш добавлено много игроков, уберите {len(list_command) - count_players}'
+    elif len(list_command_) > count_players:
+        await callback.answer(text=f'В розыгрыш добавлено много игроков, уберите {len(list_command_) - count_players}'
                                    f' игрока(ов)',
                               show_alert=True)
         # return
     # else:
-    if len(list_command) < count_players:
+    if len(list_command_) < count_players:
         text = f'<b>Состав розыгрыша:</b>\n'
         i = 0
-        for player in list_command:
+        for player in list_command_:
             if player[2]:
-                text += f'{i+1}. {player[1]}\n'
+                i += 1
+                text += f'{i}. {player[1]}\n'
 
         await callback.message.edit_text(text=text,
                                          reply_markup=keyboard_confirm_game(),
@@ -372,10 +404,13 @@ async def process_change_game(callback: CallbackQuery, state: FSMContext) -> Non
     """
     logging.info(f'process_change_game: {callback.message.chat.id}')
     list_command = get_list_command(id_coach=callback.message.chat.id)
-    user_dict[callback.message.chat.id] = await state.get_data()
-    position = user_dict[callback.message.chat.id]['position']
+    info_coach = get_info_coach(id_coach=callback.message.chat.id)
+    if info_coach[2]:
+        list_command.append([info_coach[0], info_coach[1], info_coach[3]])
     # если игра уже идет, и производится замена игроков в розыгрыше, то нужно удалить последнюю позицию розыгрыша
     if 'stat' in user_dict[callback.message.chat.id].keys():
+        user_dict[callback.message.chat.id] = await state.get_data()
+        position = user_dict[callback.message.chat.id]['position']
         for player in list_command:
             # telegram_id, username, in_game
             if player[2]:

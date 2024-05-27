@@ -5,11 +5,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup, default_state
 
 
-from module.data_base import create_table_users, check_token
+from module.data_base import create_table_users, check_token, get_id_coach
 import logging
 from config_data.config import Config, load_config
 from filter.user_filter import check_user
-from keyboards.keyboards_admin import keyboards_manager
+from keyboards.keyboards_admin import keyboards_player
 
 router = Router()
 # Загружаем конфиг в переменную config
@@ -39,7 +39,7 @@ async def process_start_command_user(message: Message, state: FSMContext) -> Non
         await state.set_state(User.get_token)
     else:
         await message.answer(text='Вы авторизованы в боте',
-                             reply_markup=keyboards_manager())
+                             reply_markup=keyboards_player())
 
 
 # проверяем TOKEN
@@ -48,14 +48,15 @@ async def get_token_user(message: Message, bot: Bot, state: FSMContext) -> None:
     logging.info(f'get_token_user: {message.chat.id}')
     if check_token(message):
         await message.answer(text='Вы верифицированы',
-                             reply_markup=keyboards_manager())
-        list_admin = config.tg_bot.admin_ids.split(',')
+                             reply_markup=keyboards_player())
+        # list_admin = config.tg_bot.admin_ids.split(',')
+        coach = get_id_coach(id_player=message.chat.id)
         await state.set_state(default_state)
-        for admin_id in list_admin:
-            try:
-                await bot.send_message(chat_id=int(admin_id),
-                                       text=f'Пользователь @{message.from_user.username} авторизован')
-            except:
-                pass
+        # for admin_id in list_admin:
+        try:
+            await bot.send_message(chat_id=coach,
+                                   text=f'Пользователь @{message.from_user.username} авторизован')
+        except:
+            pass
     else:
         await message.answer(text='TOKEN не прошел верификацию. Попробуйте с другим TOKEN')
