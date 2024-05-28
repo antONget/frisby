@@ -22,5 +22,5 @@ def list_sales_to_exel(stat_command: dict, command_1: str, command_2: str):
     # dict_stat["Защита"].append(protect)
     df_stat = pd.DataFrame(dict_stat)
     with pd.ExcelWriter(path='./sales.xlsx', engine='xlsxwriter') as writer:
-        df_stat.to_excel(writer, sheet_name=f'Статистика {command_1} VS {command_2}', index=False)
+        df_stat.to_excel(writer, sheet_name=f'Статистика', index=False)
 

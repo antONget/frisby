@@ -13,7 +13,7 @@ router = Router()
 
 
 @router.message(CommandStart(), lambda message: check_super_admin(message.chat.id))
-async def process_start_command_admin(message: Message) -> None:
+async def s(message: Message) -> None:
     logging.info("process_start_command")
     """
     Запуск бота супер-администратором

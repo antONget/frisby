@@ -31,7 +31,7 @@ async def process_statistic(message: Message) -> None:
 
 
 @router.callback_query(F.data.startswith('statplace_'))
-async def process_statistic(callback: CallbackQuery) -> None:
+async def process_statistic_statplace(callback: CallbackQuery) -> None:
     """
     Выбор места проведения игры
     :param callback: callback.data.split('_')[1] - street or room

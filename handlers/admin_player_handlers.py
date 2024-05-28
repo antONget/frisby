@@ -46,7 +46,7 @@ async def process_add_user(callback: CallbackQuery) -> None:
 
 # удалить пользователя
 @router.callback_query(F.data == 'delete_user')
-async def process_description(callback: CallbackQuery) -> None:
+async def process_delete_user(callback: CallbackQuery) -> None:
     logging.info(f'process_description: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
     print(list_user)
@@ -107,7 +107,7 @@ async def process_notdel_user(callback: CallbackQuery) -> None:
 
 # удаление после подтверждения
 @router.callback_query(F.data == 'del_user')
-async def process_descriptiondel_user(callback: CallbackQuery, state: FSMContext) -> None:
+async def process_del_user(callback: CallbackQuery, state: FSMContext) -> None:
     logging.info(f'process_descriptiondel_user: {callback.message.chat.id}')
     user_dict[callback.message.chat.id] = await state.get_data()
     delete_user(user_dict[callback.message.chat.id]["del_telegram_id"])
@@ -118,8 +118,8 @@ async def process_descriptiondel_user(callback: CallbackQuery, state: FSMContext
 
 # удалить пользователя
 @router.callback_query(F.data == 'change_user')
-async def process_description(callback: CallbackQuery) -> None:
-    logging.info(f'process_description: {callback.message.chat.id}')
+async def process_change_user(callback: CallbackQuery) -> None:
+    logging.info(f'process_change_user: {callback.message.chat.id}')
     list_user = get_list_users(id_coach=callback.message.chat.id)
     print(list_user)
     keyboard = keyboards_change_users(list_user, 0, 2, 6)

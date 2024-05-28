@@ -202,7 +202,7 @@ async def process_select_player(callback: CallbackQuery, state: FSMContext) -> N
 @router.callback_query(F.data == 'create_command')
 async def process_create_command(callback: CallbackQuery, state: FSMContext) -> None:
     """
-    Согласование состава команды не игру (заявки на игру)
+    Согласование состава команды на игру (заявки на игру)
     :param callback:
     :param state:
     :return:
@@ -247,14 +247,14 @@ async def process_change_command(callback: CallbackQuery, state: FSMContext) -> 
 
 
 @router.callback_query(F.data == 'confirm_command')
-async def process_create_command(callback: CallbackQuery, state: FSMContext) -> None:
+async def process_confirm_command(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Подтверждение создания состава команды (заявки на игру)
     :param callback:
     :param state:
     :return:
     """
-    logging.info(f'process_create_command: {callback.message.chat.id}')
+    logging.info(f'process_confirm_command: {callback.message.chat.id}')
     # указываем что это первый розыгрыш
     await state.update_data(firstgame=1)
     list_command = get_list_command(id_coach=callback.message.chat.id)
@@ -427,7 +427,7 @@ async def process_change_game(callback: CallbackQuery, state: FSMContext) -> Non
 
 
 @router.callback_query(F.data == 'confirm_game')
-async def process_create_command(callback: CallbackQuery, state: FSMContext) -> None:
+async def process_confirm_game(callback: CallbackQuery, state: FSMContext) -> None:
     """
     Начало игры (первый розыгрыш)
     :param callback:

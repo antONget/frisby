@@ -152,14 +152,14 @@ async def process_deleteuser(callback: CallbackQuery, state: FSMContext) -> None
 
 # отмена добавления пользователя в список администраторов
 @router.callback_query(F.data == 'notdel_admin_list')
-async def process_deleteuser(callback: CallbackQuery) -> None:
+async def process_notdel_admin_list(callback: CallbackQuery) -> None:
     logging.info(f'process_deleteuser: {callback.message.chat.id}')
     await process_change_list_admins(callback.message)
 
 
 # удаление после подтверждения
 @router.callback_query(F.data == 'del_admin_list')
-async def process_description(callback: CallbackQuery, state: FSMContext) -> None:
+async def process_del_admin_list(callback: CallbackQuery, state: FSMContext) -> None:
     logging.info(f'process_description: {callback.message.chat.id}')
     user_dict[callback.message.chat.id] = await state.get_data()
     # user_info = get_user(user_dict[callback.message.chat.id]["del_admin_telegram_id"])
